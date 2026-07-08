@@ -1,0 +1,58 @@
+server:
+  port: ${SERVER_PORT:8082}
+
+spring:
+  application:
+    name: ms-sucursales
+  main:
+    web-application-type: servlet
+  datasource:
+    url: ${DB_URL:jdbc:mariadb://localhost:3306/db_ms_sucursales?createDatabaseIfNotExist=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    show-sql: ${JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        format:
+          sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: ${HIBERNATE_BIND_LOG:OFF}
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: railways
+  datasource:
+    url: jdbc:mariadb://${RAILWAY_DB_HOST}:${RAILWAY_DB_PORT}/${RAILWAY_DB_NAME}
+    username: ${RAILWAY_DB_USERNAME}
+    password: ${RAILWAY_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI}D:}
