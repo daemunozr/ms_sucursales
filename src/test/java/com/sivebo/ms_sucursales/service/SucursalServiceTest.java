@@ -48,26 +48,26 @@ class SucursalServiceTest {
         sucursal.setId(1L);
         sucursal.setNombre("Test Sucursal");
 
-        responseDTO = new SucursalResponseDTO(1L, "Test Sucursal", "Test Comuna", "Test Region", "Dir", "123", EstadoSucursal.ACTIVA);
+        responseDTO = new SucursalResponseDTO("Test Sucursal", "Test Comuna", "Test Region", "Dir", "123", EstadoSucursal.ACTIVA);
     }
 
     @Test
-    void getByIdShouldReturnSucursal() {
+    void getByNameShouldReturnSucursal() {
         when(sucursalRepository.findById(1L)).thenReturn(Optional.of(sucursal));
         when(mapperUtil.mapSucursalToDTO(sucursal)).thenReturn(responseDTO);
 
-        Optional<SucursalResponseDTO> result = sucursalService.getById(1L);
+        Optional<SucursalResponseDTO> result = sucursalService.getByNombre("Test Sucursal");
 
         assertTrue(result.isPresent());
-        assertEquals("Test Sucursal", result.get().getNombre());
+        assertEquals("Test Comuna", result.get().getNombreComuna());
         verify(sucursalRepository, times(1)).findById(1L);
     }
 
     @Test
-    void getByIdNoEncontradoRetornaVacio() {
-        when(sucursalRepository.findById(99L)).thenReturn(Optional.empty());
+    void getByNombreNoEncontradoRetornaVacio() {
+        when(sucursalRepository.findByNombre("Alksjddksljjdfhs")).thenReturn(Optional.empty());
 
-        Optional<SucursalResponseDTO> result = sucursalService.getById(99L);
+        Optional<SucursalResponseDTO> result = sucursalService.getByNombre("Alksjddksljjdfhs");
 
         assertFalse(result.isPresent());
     }
@@ -112,13 +112,13 @@ class SucursalServiceTest {
     @Test
     void deactivateEncontradoCambiaEstadoAInactiva() {
         Sucursal inactiva = new Sucursal(1L, "Test Sucursal", null, "Dir", "123", EstadoSucursal.INACTIVA);
-        SucursalResponseDTO inactivaDTO = new SucursalResponseDTO(1L, "Test Sucursal", "Test Comuna", "Test Region", "Dir", "123", EstadoSucursal.INACTIVA);
+        SucursalResponseDTO inactivaDTO = new SucursalResponseDTO("Test Sucursal", "Test Comuna", "Test Region", "Dir", "123", EstadoSucursal.INACTIVA);
 
         when(sucursalRepository.findById(1L)).thenReturn(Optional.of(sucursal));
         when(sucursalRepository.save(any(Sucursal.class))).thenReturn(inactiva);
         when(mapperUtil.mapSucursalToDTO(inactiva)).thenReturn(inactivaDTO);
 
-        Optional<SucursalResponseDTO> result = sucursalService.deactivate(1L);
+        Optional<SucursalResponseDTO> result = sucursalService.deactivate("Test Sucursal");
 
         assertTrue(result.isPresent());
         assertEquals(EstadoSucursal.INACTIVA, result.get().getEstado());

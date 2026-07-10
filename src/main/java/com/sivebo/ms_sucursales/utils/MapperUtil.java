@@ -14,7 +14,6 @@ public class MapperUtil {
 
         public SucursalResponseDTO mapSucursalToDTO(Sucursal sucursal) {
                 return new SucursalResponseDTO(
-                                sucursal.getId(),
                                 sucursal.getNombre(),
                                 sucursal.getComuna().getNombre(),
                                 sucursal.getComuna().getRegion().getNombre(),
@@ -25,14 +24,12 @@ public class MapperUtil {
 
         public ComunaResponseDTO mapComunaToDTO(Comuna comuna) {
                 return new ComunaResponseDTO(
-                                comuna.getId(),
                                 comuna.getNombre(),
                                 comuna.getRegion().getNombre());
         }
 
         public RegionResponseDTO mapRegionToDTO(Region region) {
                 return new RegionResponseDTO(
-                                region.getId(),
                                 region.getNombre());
         }
 }

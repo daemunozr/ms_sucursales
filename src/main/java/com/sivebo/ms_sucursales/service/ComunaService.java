@@ -36,23 +36,14 @@ public class ComunaService {
                 return comunaRepository.findByNombre(nombre).map(mapperUtil::mapComunaToDTO);
         }
 
-        public List<ComunaResponseDTO> getByRegionId(Long idRegion) {
-                return comunaRepository.findByRegionId(idRegion)
-                                .stream().map(mapperUtil::mapComunaToDTO)
-                                .collect(Collectors.toList());
-        }
-
         public List<ComunaResponseDTO> getByRegionNombre(String nombreRegion) {
                 return comunaRepository.findByRegionNombre(nombreRegion)
                                 .stream().map(mapperUtil::mapComunaToDTO)
                                 .collect(Collectors.toList());
         }
 
-        public List<ComunaResponseDTO> searchByAttribute(String id, String nombre, String region) {
-                if (id != null) {
-                        log.info(">>> Buscando comuna por id: {}", id);
-                        return getById(Long.valueOf(id)).map(List::of).orElse(List.of());
-                } else if (nombre != null) {
+        public List<ComunaResponseDTO> searchByAttribute(String nombre, String region) {
+                if (nombre != null) {
                         log.info(">>> Buscando comuna por nombre: {}", nombre);
                         return getByNombre(nombre).map(List::of).orElse(List.of());
                 } else if (region != null) {

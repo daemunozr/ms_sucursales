@@ -31,15 +31,18 @@ public class SucursalService {
 
         @Transactional(readOnly = true)
         public List<SucursalResponseDTO> getAll() {
-                return sucursalRepository.findByEstado(EstadoSucursal.ACTIVA)
+                return sucursalRepository.findAll()
                                 .stream()
                                 .map(mapperUtil::mapSucursalToDTO)
                                 .collect(Collectors.toList());
         }
 
         @Transactional(readOnly = true)
-        public Optional<SucursalResponseDTO> getById(Long id) {
-                return sucursalRepository.findById(id).map(mapperUtil::mapSucursalToDTO);
+        public List<SucursalResponseDTO> getAllActive() {
+                return sucursalRepository.findByEstado(EstadoSucursal.ACTIVA)
+                                .stream()
+                                .map(mapperUtil::mapSucursalToDTO)
+                                .collect(Collectors.toList());
         }
 
         @Transactional(readOnly = true)
@@ -77,8 +80,8 @@ public class SucursalService {
         }
 
         @Transactional
-        public Optional<SucursalResponseDTO> update(Long id, SucursalRequestDTO dto) {
-                return sucursalRepository.findById(id).map(sucursal -> {
+        public Optional<SucursalResponseDTO> update(String nombre, SucursalRequestDTO dto) {
+                return sucursalRepository.findByNombre(nombre).map(sucursal -> {
                         Comuna comuna = comunaRepository.findByNombre(dto.getNombreComuna())
                                         .orElseThrow(() -> new EntityNotFoundException("Comuna no encontrada"));
                         sucursal.setNombre(dto.getNombre());
@@ -90,32 +93,29 @@ public class SucursalService {
         }
 
         @Transactional
-        public Optional<SucursalResponseDTO> deactivate(Long id) {
-                return sucursalRepository.findById(id).map(sucursal -> {
+        public Optional<SucursalResponseDTO> deactivate(String nombre) {
+                return sucursalRepository.findByNombre(nombre).map(sucursal -> {
                         sucursal.setEstado(EstadoSucursal.INACTIVA);
                         return mapperUtil.mapSucursalToDTO(sucursalRepository.save(sucursal));
                 });
         }
 
         @Transactional
-        public Optional<SucursalResponseDTO> activate(Long id) {
-                return sucursalRepository.findById(id).map(sucursal -> {
+        public Optional<SucursalResponseDTO> activate(String nombre) {
+                return sucursalRepository.findByNombre(nombre).map(sucursal -> {
                         sucursal.setEstado(EstadoSucursal.ACTIVA);
                         return mapperUtil.mapSucursalToDTO(sucursalRepository.save(sucursal));
                 });
         }
 
         @Transactional
-        public Boolean deleteByNombre(String nombre) {
+        public Boolean delete(String nombre) {
                 sucursalRepository.deleteByNombre(nombre);
                 return !sucursalRepository.existsByNombre(nombre);
         }
 
-        public List<SucursalResponseDTO> searchByAttribute(String id, String nombre, String comuna, String region) {
-                if (id != null) {
-                        log.info(">>> Buscando sucursal por id: {}", id);
-                        return getById(Long.valueOf(id)).map(List::of).orElse(List.of());
-                } else if (nombre != null) {
+        public List<SucursalResponseDTO> searchByAttribute(String nombre, String comuna, String region) {
+                if (nombre != null) {
                         log.info(">>> Buscando sucursal por nombre: {}", nombre);
                         return getByNombre(nombre).map(List::of).orElse(List.of());
                 } else if (comuna != null) {

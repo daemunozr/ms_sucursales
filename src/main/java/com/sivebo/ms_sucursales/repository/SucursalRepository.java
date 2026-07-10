@@ -12,10 +12,6 @@ import com.sivebo.ms_sucursales.model.Sucursal;
 
 public interface SucursalRepository extends JpaRepository<Sucursal, Long> {
 
-        List<Sucursal> findByComunaId(Long comunaId);
-
-        List<Sucursal> findByComunaNombre(String comunaNombre);
-
         List<Sucursal> findByEstado(EstadoSucursal estado);
 
         List<Sucursal> findByComunaNombreAndEstado(String comunaNombre, EstadoSucursal estado);

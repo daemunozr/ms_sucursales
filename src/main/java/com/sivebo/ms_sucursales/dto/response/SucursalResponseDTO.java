@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SucursalResponseDTO {
 
-        Long id;
         String nombre;
         String nombreComuna;
         String nombreRegion;

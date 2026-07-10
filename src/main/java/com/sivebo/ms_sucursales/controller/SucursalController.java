@@ -86,7 +86,7 @@ public class SucursalController {
                                                         + numValidParams);
                 }
 
-                List<SucursalResponseDTO> results = sucursalService.searchByAttribute(id, nombre, comuna, region);
+                List<SucursalResponseDTO> results = sucursalService.searchByAttribute(nombre, comuna, region);
 
                 if (results.isEmpty()) {
                         return ResponseEntity.notFound().build();
@@ -172,12 +172,12 @@ public class SucursalController {
                                 content = @Content(mediaType = "application/json")
                         )
         })
-        @PutMapping("/{id}")
+        @PutMapping("/{nombre}")
         public ResponseEntity<SucursalResponseDTO> update(
-                        @PathVariable Long id,
+                        @PathVariable String nombre,
                         @Valid @RequestBody SucursalRequestDTO dto) {
 
-                return sucursalService.update(id, dto)
+                return sucursalService.update(nombre, dto)
                                 .map(ResponseEntity::ok)
                                 .orElse(ResponseEntity.notFound().build());
         }
@@ -201,9 +201,9 @@ public class SucursalController {
                                 content = @Content(mediaType = "application/json")
                         )
         })
-        @PatchMapping("/{id}/desactivar")
-        public ResponseEntity<SucursalResponseDTO> deactivate(@PathVariable Long id) {
-                return sucursalService.deactivate(id)
+        @PatchMapping("/{nombre}/desactivar")
+        public ResponseEntity<SucursalResponseDTO> deactivate(@PathVariable String nombre) {
+                return sucursalService.deactivate(nombre)
                                 .map(ResponseEntity::ok)
                                 .orElse(ResponseEntity.notFound().build());
         }
@@ -227,9 +227,9 @@ public class SucursalController {
                                 content = @Content(mediaType = "application/json")
                         )
         })
-        @PatchMapping("/{id}/activar")
-        public ResponseEntity<SucursalResponseDTO> activate(@PathVariable Long id) {
-                return sucursalService.activate(id)
+        @PatchMapping("/{nombre}/activar")
+        public ResponseEntity<SucursalResponseDTO> activate(@PathVariable String nombre) {
+                return sucursalService.activate(nombre)
                                 .map(ResponseEntity::ok)
                                 .orElse(ResponseEntity.notFound().build());
         }

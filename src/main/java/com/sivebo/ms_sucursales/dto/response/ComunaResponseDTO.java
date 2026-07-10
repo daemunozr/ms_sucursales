@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ComunaResponseDTO {
 
-        Long id;
         String nombre;
         String nombreRegion;
 }

@@ -76,11 +76,10 @@ public class ComunaController {
         })
         @GetMapping("/buscar")
         public ResponseEntity<?> getByAtribute(
-                        @RequestParam(required = false) String id,
                         @RequestParam(required = false) String nombre,
                         @RequestParam(required = false) String region) {
 
-                List<String> params = new ArrayList<>(Arrays.asList(id, nombre, region));
+                List<String> params = new ArrayList<>(Arrays.asList(nombre, region));
 
                 int numNull = 0;
                 for (String value : params) {
@@ -96,13 +95,13 @@ public class ComunaController {
                                                         + numValidParams);
                 }
 
-                List<ComunaResponseDTO> results = comunaService.searchByAttribute(id, nombre, region);
+                List<ComunaResponseDTO> results = comunaService.searchByAttribute(nombre, region);
 
                 if (results.isEmpty()) {
                         return ResponseEntity.notFound().build();
                 }
 
-                if (id != null || nombre != null) {
+                if (nombre != null) {
                         return ResponseEntity.ok(results.get(0));
                 }
 
