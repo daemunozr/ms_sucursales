@@ -1,7 +1,5 @@
 package com.sivebo.ms_sucursales.dto.request;
 
-import com.sivebo.ms_sucursales.model.EstadoSucursal;
-
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;

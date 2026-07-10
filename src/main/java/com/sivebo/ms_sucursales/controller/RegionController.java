@@ -76,10 +76,9 @@ public class RegionController {
         })
         @GetMapping("/buscar")
         public ResponseEntity<?> getByAtribute(
-                        @RequestParam(required = false) String id,
                         @RequestParam(required = false) String nombre) {
 
-                List<String> params = new ArrayList<>(Arrays.asList(id, nombre));
+                List<String> params = new ArrayList<>(Arrays.asList(nombre));
 
                 int numNull = 0;
                 for (String value : params) {
@@ -93,11 +92,6 @@ public class RegionController {
                         return ResponseEntity.badRequest().body(
                                         "Solo se permite un atributo de búsqueda a la vez pero ingresado "
                                                         + numValidParams);
-                } else if (id != null) {
-                        log.info(">>> Buscando region por id: {}", id);
-                        return regionService.getById(Long.valueOf(id))
-                                        .map(ResponseEntity::ok)
-                                        .orElse(ResponseEntity.notFound().build());
                 } else if (nombre != null) {
                         log.info(">>> Buscando region por nombre: {}", nombre);
                         return regionService.getByNombre(nombre)

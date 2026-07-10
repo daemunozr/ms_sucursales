@@ -28,10 +28,6 @@ public class RegionService {
                                 .collect(Collectors.toList());
         }
 
-        public Optional<RegionResponseDTO> getById(Long id) {
-                return regionRepository.findById(id).map(mapperUtil::mapRegionToDTO);
-        }
-
         public Optional<RegionResponseDTO> getByNombre(String nombre) {
                 return regionRepository.findByNombre(nombre).map(mapperUtil::mapRegionToDTO);
         }
