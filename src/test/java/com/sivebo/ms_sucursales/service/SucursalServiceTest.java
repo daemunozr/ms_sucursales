@@ -53,14 +53,14 @@ class SucursalServiceTest {
 
     @Test
     void getByNameShouldReturnSucursal() {
-        when(sucursalRepository.findById(1L)).thenReturn(Optional.of(sucursal));
+        when(sucursalRepository.findByNombre("Test Sucursal")).thenReturn(Optional.of(sucursal));
         when(mapperUtil.mapSucursalToDTO(sucursal)).thenReturn(responseDTO);
 
         Optional<SucursalResponseDTO> result = sucursalService.getByNombre("Test Sucursal");
 
         assertTrue(result.isPresent());
         assertEquals("Test Comuna", result.get().getNombreComuna());
-        verify(sucursalRepository, times(1)).findById(1L);
+        verify(sucursalRepository, times(1)).findByNombre("Test Sucursal");
     }
 
     @Test
@@ -74,7 +74,7 @@ class SucursalServiceTest {
 
     @Test
     void getAllRetornaListaMapeada() {
-        when(sucursalRepository.findByEstado(EstadoSucursal.ACTIVA)).thenReturn(List.of(sucursal));
+        when(sucursalRepository.findAll()).thenReturn(List.of(sucursal));
         when(mapperUtil.mapSucursalToDTO(sucursal)).thenReturn(responseDTO);
 
         List<SucursalResponseDTO> result = sucursalService.getAll();
@@ -114,7 +114,7 @@ class SucursalServiceTest {
         Sucursal inactiva = new Sucursal(1L, "Test Sucursal", null, "Dir", "123", EstadoSucursal.INACTIVA);
         SucursalResponseDTO inactivaDTO = new SucursalResponseDTO("Test Sucursal", "Test Comuna", "Test Region", "Dir", "123", EstadoSucursal.INACTIVA);
 
-        when(sucursalRepository.findById(1L)).thenReturn(Optional.of(sucursal));
+        when(sucursalRepository.findByNombre("Test Sucursal")).thenReturn(Optional.of(sucursal));
         when(sucursalRepository.save(any(Sucursal.class))).thenReturn(inactiva);
         when(mapperUtil.mapSucursalToDTO(inactiva)).thenReturn(inactivaDTO);
 
