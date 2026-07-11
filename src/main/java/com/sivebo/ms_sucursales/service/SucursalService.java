@@ -110,8 +110,11 @@ public class SucursalService {
 
         @Transactional
         public Boolean delete(String nombre) {
+                if (!sucursalRepository.existsByNombre(nombre)) {
+                        return false;
+                }
                 sucursalRepository.deleteByNombre(nombre);
-                return !sucursalRepository.existsByNombre(nombre);
+                return true;
         }
 
         public List<SucursalResponseDTO> searchByAttribute(String nombre, String comuna, String region) {

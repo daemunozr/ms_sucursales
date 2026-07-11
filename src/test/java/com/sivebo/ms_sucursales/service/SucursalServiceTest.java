@@ -123,4 +123,24 @@ class SucursalServiceTest {
         assertTrue(result.isPresent());
         assertEquals(EstadoSucursal.INACTIVA, result.get().getEstado());
     }
+
+    @Test
+    void deleteExistenteEliminaYRetornaTrue() {
+        when(sucursalRepository.existsByNombre("Test Sucursal")).thenReturn(true);
+
+        Boolean result = sucursalService.delete("Test Sucursal");
+
+        assertTrue(result);
+        verify(sucursalRepository, times(1)).deleteByNombre("Test Sucursal");
+    }
+
+    @Test
+    void deleteNoExistenteNoEliminaYRetornaFalse() {
+        when(sucursalRepository.existsByNombre("Inexistente")).thenReturn(false);
+
+        Boolean result = sucursalService.delete("Inexistente");
+
+        assertFalse(result);
+        verify(sucursalRepository, never()).deleteByNombre(anyString());
+    }
 }

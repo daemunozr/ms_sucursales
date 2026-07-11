@@ -41,7 +41,7 @@ public class SucursalController {
 
         @Operation(
                 summary = "Obtener sucursales por query",
-                description = "Obtiene una lista o unidad de JSON de sucursales activas por query 'buscar?id=*', 'buscar?nombre=*', 'buscar?comuna=*' o 'buscar?region=*'"
+                description = "Obtiene una lista o unidad de JSON de sucursales activas por query 'buscar?nombre=*', 'buscar?comuna=*' o 'buscar?region=*'"
         )
         @ApiResponses(value = {
                         @ApiResponse(
@@ -65,12 +65,11 @@ public class SucursalController {
         })
         @GetMapping("/buscar")
         public ResponseEntity<?> getByAtribute(
-                        @RequestParam(required = false) String id,
                         @RequestParam(required = false) String nombre,
                         @RequestParam(required = false) String comuna,
                         @RequestParam(required = false) String region) {
 
-                List<String> params = new ArrayList<>(Arrays.asList(id, nombre, comuna, region));
+                List<String> params = new ArrayList<>(Arrays.asList(nombre, comuna, region));
 
                 int numNull = 0;
                 for (String value : params) {
@@ -92,7 +91,7 @@ public class SucursalController {
                         return ResponseEntity.notFound().build();
                 }
 
-                if (id != null || nombre != null) {
+                if (nombre != null) {
                         return ResponseEntity.ok(results.get(0));
                 }
 
