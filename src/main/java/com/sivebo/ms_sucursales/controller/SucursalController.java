@@ -1,11 +1,10 @@
 package com.sivebo.ms_sucursales.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +19,7 @@ import com.sivebo.ms_sucursales.dto.request.SucursalCreateDTO;
 import com.sivebo.ms_sucursales.dto.request.SucursalUpdateDTO;
 import com.sivebo.ms_sucursales.dto.response.SucursalResponseDTO;
 import com.sivebo.ms_sucursales.service.SucursalService;
+import com.sivebo.ms_sucursales.utils.QueryParamUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -70,14 +70,7 @@ public class SucursalController {
                         @RequestParam(required = false) String comuna,
                         @RequestParam(required = false) String region) {
 
-                List<String> params = new ArrayList<>(Arrays.asList(nombre, comuna, region));
-
-                int numNull = 0;
-                for (String value : params) {
-                        if (value == null)
-                                numNull++;
-                }
-                int numValidParams = params.size() - numNull;
+                int numValidParams = QueryParamUtil.countNonNull(nombre, comuna, region);
                 if (numValidParams != 1) {
                         log.info("Solo se permite un atributo de búsqueda a la vez pero ingresado {}",
                                         numValidParams);
@@ -232,5 +225,27 @@ public class SucursalController {
                 return sucursalService.activate(nombre)
                                 .map(ResponseEntity::ok)
                                 .orElse(ResponseEntity.notFound().build());
+        }
+
+        @Operation(
+                summary = "Eliminar una sucursal",
+                description = "Elimina permanentemente una sucursal por su nombre"
+        )
+        @ApiResponses(value = {
+                        @ApiResponse(
+                                responseCode = "204",
+                                description = "Sucursal eliminada exitosamente"
+                        ),
+                        @ApiResponse(
+                                responseCode = "404",
+                                description = "Sucursal no encontrada",
+                                content = @Content(mediaType = "application/json")
+                        )
+        })
+        @DeleteMapping("/{nombre}")
+        public ResponseEntity<Void> delete(@PathVariable String nombre) {
+                return sucursalService.delete(nombre)
+                                ? ResponseEntity.noContent().build()
+                                : ResponseEntity.notFound().build();
         }
 }

@@ -1,7 +1,5 @@
 package com.sivebo.ms_sucursales.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sivebo.ms_sucursales.dto.response.ComunaResponseDTO;
 import com.sivebo.ms_sucursales.service.ComunaService;
+import com.sivebo.ms_sucursales.utils.QueryParamUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -52,7 +51,7 @@ public class ComunaController {
 
         @Operation(
                 summary = "Obtener comunas por query",
-                description = "Obtiene una lista o unidad de JSON de todas las comunas por query 'buscar?id=*', 'buscar?nombre=*' o 'buscar?region=*'"
+                description = "Obtiene una lista o unidad de JSON de todas las comunas por query 'buscar?nombre=*' o 'buscar?region=*'"
         )
         @ApiResponses(value = {
                         @ApiResponse(
@@ -79,14 +78,7 @@ public class ComunaController {
                         @RequestParam(required = false) String nombre,
                         @RequestParam(required = false) String region) {
 
-                List<String> params = new ArrayList<>(Arrays.asList(nombre, region));
-
-                int numNull = 0;
-                for (String value : params) {
-                        if (value == null)
-                                numNull++;
-                }
-                int numValidParams = params.size() - numNull;
+                int numValidParams = QueryParamUtil.countNonNull(nombre, region);
                 if (numValidParams != 1) {
                         log.info("Solo se permite un atributo de búsqueda a la vez pero ingresado {}",
                                         numValidParams);

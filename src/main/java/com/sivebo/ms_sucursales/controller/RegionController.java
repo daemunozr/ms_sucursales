@@ -1,7 +1,5 @@
 package com.sivebo.ms_sucursales.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sivebo.ms_sucursales.dto.response.RegionResponseDTO;
 import com.sivebo.ms_sucursales.service.RegionService;
+import com.sivebo.ms_sucursales.utils.QueryParamUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -52,7 +51,7 @@ public class RegionController {
 
         @Operation(
                 summary = "Obtener regiones por query",
-                description = "Obtiene una región por query 'buscar?id=*' o 'buscar?nombre=*'"
+                description = "Obtiene una región por query 'buscar?nombre=*'"
         )
         @ApiResponses(value = {
                         @ApiResponse(
@@ -78,27 +77,19 @@ public class RegionController {
         public ResponseEntity<?> getByAtribute(
                         @RequestParam(required = false) String nombre) {
 
-                List<String> params = new ArrayList<>(Arrays.asList(nombre));
-
-                int numNull = 0;
-                for (String value : params) {
-                        if (value == null)
-                                numNull++;
-                }
-                int numValidParams = params.size() - numNull;
+                int numValidParams = QueryParamUtil.countNonNull(nombre);
                 if (numValidParams != 1) {
                         log.info("Solo se permite un atributo de búsqueda a la vez pero ingresado {}",
                                         numValidParams);
                         return ResponseEntity.badRequest().body(
                                         "Solo se permite un atributo de búsqueda a la vez pero ingresado "
                                                         + numValidParams);
-                } else if (nombre != null) {
-                        log.info(">>> Buscando region por nombre: {}", nombre);
-                        return regionService.getByNombre(nombre)
-                                        .map(ResponseEntity::ok)
-                                        .orElse(ResponseEntity.notFound().build());
                 }
-                return ResponseEntity.internalServerError().body("Error en el URL query");
+
+                log.info(">>> Buscando region por nombre: {}", nombre);
+                return regionService.getByNombre(nombre)
+                                .map(ResponseEntity::ok)
+                                .orElse(ResponseEntity.notFound().build());
         }
 
 }

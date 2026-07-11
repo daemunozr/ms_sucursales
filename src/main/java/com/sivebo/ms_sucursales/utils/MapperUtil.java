@@ -13,19 +13,34 @@ import com.sivebo.ms_sucursales.model.Sucursal;
 public class MapperUtil {
 
         public SucursalResponseDTO mapSucursalToDTO(Sucursal sucursal) {
+                Comuna comuna = sucursal.getComuna();
+                if (comuna == null) {
+                        throw new IllegalStateException(
+                                        "La sucursal '" + sucursal.getNombre() + "' no tiene una comuna asociada");
+                }
+                Region region = comuna.getRegion();
+                if (region == null) {
+                        throw new IllegalStateException(
+                                        "La comuna '" + comuna.getNombre() + "' no tiene una región asociada");
+                }
                 return new SucursalResponseDTO(
                                 sucursal.getNombre(),
-                                sucursal.getComuna().getNombre(),
-                                sucursal.getComuna().getRegion().getNombre(),
+                                comuna.getNombre(),
+                                region.getNombre(),
                                 sucursal.getDireccionFisica(),
                                 sucursal.getTelefonoContacto(),
                                 sucursal.getEstado());
         }
 
         public ComunaResponseDTO mapComunaToDTO(Comuna comuna) {
+                Region region = comuna.getRegion();
+                if (region == null) {
+                        throw new IllegalStateException(
+                                        "La comuna '" + comuna.getNombre() + "' no tiene una región asociada");
+                }
                 return new ComunaResponseDTO(
                                 comuna.getNombre(),
-                                comuna.getRegion().getNombre());
+                                region.getNombre());
         }
 
         public RegionResponseDTO mapRegionToDTO(Region region) {
