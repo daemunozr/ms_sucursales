@@ -19,6 +19,7 @@ import com.sivebo.ms_sucursales.dto.request.SucursalCreateDTO;
 import com.sivebo.ms_sucursales.dto.request.SucursalUpdateDTO;
 import com.sivebo.ms_sucursales.dto.response.SucursalResponseDTO;
 import com.sivebo.ms_sucursales.service.SucursalService;
+import com.sivebo.ms_sucursales.utils.ApiErrorUtil;
 import com.sivebo.ms_sucursales.utils.QueryParamUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -75,14 +76,15 @@ public class SucursalController {
                         log.info("Solo se permite un atributo de búsqueda a la vez pero ingresado {}",
                                         numValidParams);
                         return ResponseEntity.badRequest()
-                                        .body("Solo se permite un atributo de búsqueda a la vez pero ingresado "
-                                                        + numValidParams);
+                                        .body(ApiErrorUtil.of("Solo se permite un atributo de búsqueda a la vez pero ingresado "
+                                                        + numValidParams));
                 }
 
                 List<SucursalResponseDTO> results = sucursalService.searchByAttribute(nombre, comuna, region);
 
                 if (results.isEmpty()) {
-                        return ResponseEntity.notFound().build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                        .body(ApiErrorUtil.of("No se encontraron sucursales con los criterios indicados"));
                 }
 
                 if (nombre != null) {
@@ -166,13 +168,14 @@ public class SucursalController {
                         )
         })
         @PutMapping("/{nombre}")
-        public ResponseEntity<SucursalResponseDTO> update(
+        public ResponseEntity<?> update(
                         @PathVariable String nombre,
                         @Valid @RequestBody SucursalUpdateDTO dto) {
 
                 return sucursalService.update(nombre, dto)
-                                .map(ResponseEntity::ok)
-                                .orElse(ResponseEntity.notFound().build());
+                                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                                .body(ApiErrorUtil.of("Sucursal no encontrada")));
         }
 
         @Operation(
@@ -195,10 +198,11 @@ public class SucursalController {
                         )
         })
         @PatchMapping("/{nombre}/desactivar")
-        public ResponseEntity<SucursalResponseDTO> deactivate(@PathVariable String nombre) {
+        public ResponseEntity<?> deactivate(@PathVariable String nombre) {
                 return sucursalService.deactivate(nombre)
-                                .map(ResponseEntity::ok)
-                                .orElse(ResponseEntity.notFound().build());
+                                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                                .body(ApiErrorUtil.of("Sucursal no encontrada")));
         }
 
         @Operation(
@@ -221,10 +225,11 @@ public class SucursalController {
                         )
         })
         @PatchMapping("/{nombre}/activar")
-        public ResponseEntity<SucursalResponseDTO> activate(@PathVariable String nombre) {
+        public ResponseEntity<?> activate(@PathVariable String nombre) {
                 return sucursalService.activate(nombre)
-                                .map(ResponseEntity::ok)
-                                .orElse(ResponseEntity.notFound().build());
+                                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                                .body(ApiErrorUtil.of("Sucursal no encontrada")));
         }
 
         @Operation(
@@ -243,9 +248,11 @@ public class SucursalController {
                         )
         })
         @DeleteMapping("/{nombre}")
-        public ResponseEntity<Void> delete(@PathVariable String nombre) {
-                return sucursalService.delete(nombre)
-                                ? ResponseEntity.noContent().build()
-                                : ResponseEntity.notFound().build();
+        public ResponseEntity<?> delete(@PathVariable String nombre) {
+                if (sucursalService.delete(nombre)) {
+                        return ResponseEntity.noContent().build();
+                }
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                .body(ApiErrorUtil.of("Sucursal no encontrada"));
         }
 }

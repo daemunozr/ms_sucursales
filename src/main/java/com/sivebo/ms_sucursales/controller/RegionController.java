@@ -2,6 +2,7 @@ package com.sivebo.ms_sucursales.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sivebo.ms_sucursales.dto.response.RegionResponseDTO;
 import com.sivebo.ms_sucursales.service.RegionService;
+import com.sivebo.ms_sucursales.utils.ApiErrorUtil;
 import com.sivebo.ms_sucursales.utils.QueryParamUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,15 +83,16 @@ public class RegionController {
                 if (numValidParams != 1) {
                         log.info("Solo se permite un atributo de búsqueda a la vez pero ingresado {}",
                                         numValidParams);
-                        return ResponseEntity.badRequest().body(
+                        return ResponseEntity.badRequest().body(ApiErrorUtil.of(
                                         "Solo se permite un atributo de búsqueda a la vez pero ingresado "
-                                                        + numValidParams);
+                                                        + numValidParams));
                 }
 
                 log.info(">>> Buscando region por nombre: {}", nombre);
                 return regionService.getByNombre(nombre)
-                                .map(ResponseEntity::ok)
-                                .orElse(ResponseEntity.notFound().build());
+                                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                                .body(ApiErrorUtil.of("No se encontró región con los criterios indicados")));
         }
 
 }

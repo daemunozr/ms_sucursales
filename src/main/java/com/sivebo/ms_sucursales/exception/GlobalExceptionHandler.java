@@ -39,13 +39,6 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 	}
 
-	@ExceptionHandler(NumberFormatException.class)
-	public ResponseEntity<Map<String, String>> handleNumberFormat(NumberFormatException ex) {
-		Map<String, String> error = new HashMap<>();
-		error.put("error", "El parámetro 'id' debe ser un número entero válido");
-		return ResponseEntity.badRequest().body(error);
-	}
-
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<Map<String, String>> handleRuntime(RuntimeException ex) {
 		log.error("Unhandled runtime exception", ex);
