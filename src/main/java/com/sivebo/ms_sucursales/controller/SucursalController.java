@@ -43,7 +43,7 @@ public class SucursalController {
 
         @Operation(
                 summary = "Obtener sucursales por query",
-                description = "Obtiene una lista o unidad de JSON de sucursales activas por query 'buscar?nombre=*', 'buscar?comuna=*' o 'buscar?region=*'"
+                description = "Obtiene una lista o unidad de JSON de sucursales por query 'buscar?nombre=*' (cualquier estado), 'buscar?comuna=*' o 'buscar?region=*' (solo activas)"
         )
         @ApiResponses(value = {
                         @ApiResponse(
@@ -96,7 +96,7 @@ public class SucursalController {
 
         @Operation(
                 summary = "Obtener todas las sucursales registradas",
-                description = "Obtiene una lista de todas las sucursales activas"
+                description = "Obtiene una lista de todas las sucursales registradas, de cualquier estado"
         )
         @ApiResponses(value = {
                         @ApiResponse(
@@ -111,6 +111,25 @@ public class SucursalController {
         @GetMapping
         public List<SucursalResponseDTO> getAll() {
                 return sucursalService.getAll();
+        }
+
+        @Operation(
+                summary = "Obtener todas las sucursales activas",
+                description = "Obtiene una lista de todas las sucursales con estado ACTIVA"
+        )
+        @ApiResponses(value = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "Sucursales activas obtenidas exitosamente",
+                                content = @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = SucursalResponseDTO.class)
+                                )
+                        )
+        })
+        @GetMapping("/activas")
+        public List<SucursalResponseDTO> getAllActive() {
+                return sucursalService.getAllActive();
         }
 
         @Operation(

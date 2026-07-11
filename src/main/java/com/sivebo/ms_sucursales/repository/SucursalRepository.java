@@ -16,9 +16,6 @@ public interface SucursalRepository extends JpaRepository<Sucursal, Long> {
 
         List<Sucursal> findByComunaNombreAndEstado(String comunaNombre, EstadoSucursal estado);
 
-        @Query("SELECT s FROM Sucursal s JOIN s.comuna c JOIN c.region r WHERE r.nombre = :regionNombre")
-        List<Sucursal> findByRegionNombre(@Param("regionNombre") String regionNombre);
-
         @Query("SELECT s FROM Sucursal s JOIN s.comuna c JOIN c.region r WHERE r.nombre = :regionNombre AND s.estado = :estado")
         List<Sucursal> findByRegionNombreAndEstado(@Param("regionNombre") String regionNombre, @Param("estado") EstadoSucursal estado);
 
