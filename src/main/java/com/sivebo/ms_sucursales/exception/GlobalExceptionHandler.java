@@ -10,6 +10,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.sivebo.ms_sucursales.utils.ApiErrorUtil;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -19,31 +21,27 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseEntity<Map<String, String>> handleDataIntegrity(DataIntegrityViolationException ex) {
 		log.error("Data integrity violation: {}", ex.getMessage());
-		Map<String, String> error = new HashMap<>();
-		error.put("error", "Error de integridad de datos: ya existe un registro con estos valores");
-		return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+		return ResponseEntity.status(HttpStatus.CONFLICT)
+				.body(ApiErrorUtil.of("Error de integridad de datos: ya existe un registro con estos valores"));
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
+	public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
 		Map<String, String> errores = new HashMap<>();
 		ex.getBindingResult().getFieldErrors()
 				.forEach(e -> errores.put(e.getField(), e.getDefaultMessage()));
-		return ResponseEntity.badRequest().body(errores);
+		return ResponseEntity.badRequest().body(ApiErrorUtil.of(errores));
 	}
 
 	@ExceptionHandler(EntityNotFoundException.class)
 	public ResponseEntity<Map<String, String>> handleEntityNotFound(EntityNotFoundException ex) {
-		Map<String, String> error = new HashMap<>();
-		error.put("error", ex.getMessage());
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiErrorUtil.of(ex.getMessage()));
 	}
 
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<Map<String, String>> handleRuntime(RuntimeException ex) {
 		log.error("Unhandled runtime exception", ex);
-		Map<String, String> error = new HashMap<>();
-		error.put("error", "Ocurrió un error interno en el servidor");
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(ApiErrorUtil.of("Ocurrió un error interno en el servidor"));
 	}
 }

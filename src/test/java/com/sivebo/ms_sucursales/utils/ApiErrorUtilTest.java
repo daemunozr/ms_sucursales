@@ -15,4 +15,14 @@ class ApiErrorUtilTest {
         assertEquals(1, error.size());
         assertEquals("Sucursal no encontrada", error.get("error"));
     }
+
+    @Test
+    void ofConMapaDeErroresEnvuelveEnClaveError() {
+        Map<String, String> fieldErrors = Map.of("nombre", "obligatorio");
+
+        Map<String, Object> result = ApiErrorUtil.of(fieldErrors);
+
+        assertEquals(1, result.size());
+        assertEquals(fieldErrors, result.get("error"));
+    }
 }

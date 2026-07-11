@@ -21,6 +21,6 @@ public class SucursalUpdateDTO {
 	@Size(min = 1, max = 100, message = "La dirección física no puede estar vacía")
 	String direccionFisica;
 
-	@Size(max = 255, message = "El teléfono de contacto no puede superar los 255 caracteres")
+	@Size(min = 1, max = 255, message = "El teléfono de contacto no puede estar vacío")
 	String telefonoContacto;
 }

@@ -59,6 +59,13 @@ class SucursalUpdateDTOValidationTest {
     }
 
     @Test
+    void telefonoContactoVacioExplicitoProduceViolacion() {
+        SucursalUpdateDTO dto = new SucursalUpdateDTO("Plaza de Armas", null, null, "");
+
+        assertFalse(validator.validate(dto).isEmpty());
+    }
+
+    @Test
     void actualizacionParcialValidaNoTieneViolaciones() {
         SucursalUpdateDTO dto = new SucursalUpdateDTO("Plaza de Armas", null, "Catedral 1000", null);
 
