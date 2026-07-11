@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.sivebo.ms_sucursales.dto.request.SucursalRequestDTO;
+import com.sivebo.ms_sucursales.dto.request.SucursalCreateDTO;
 import com.sivebo.ms_sucursales.dto.response.SucursalResponseDTO;
 import com.sivebo.ms_sucursales.exception.EntityNotFoundException;
 import com.sivebo.ms_sucursales.model.Comuna;
@@ -85,7 +85,7 @@ class SucursalServiceTest {
 
     @Test
     void createComunaExistenteGuardaYRetornaDTO() {
-        SucursalRequestDTO dto = new SucursalRequestDTO("Test Sucursal", "Santiago", "Calle 1", "123");
+        SucursalCreateDTO dto = new SucursalCreateDTO("Test Sucursal", "Santiago", "Calle 1", "123");
         Comuna comuna = new Comuna();
 
         when(comunaRepository.findByNombre("Santiago")).thenReturn(Optional.of(comuna));
@@ -101,7 +101,7 @@ class SucursalServiceTest {
 
     @Test
     void createComunaNoExistenteLanzaEntityNotFoundException() {
-        SucursalRequestDTO dto = new SucursalRequestDTO("Test", "Inexistente", "Calle", null);
+        SucursalCreateDTO dto = new SucursalCreateDTO("Test", "Inexistente", "Calle", null);
 
         when(comunaRepository.findByNombre("Inexistente")).thenReturn(Optional.empty());
 

@@ -7,7 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sivebo.ms_sucursales.dto.request.SucursalRequestDTO;
+import com.sivebo.ms_sucursales.dto.request.SucursalCreateDTO;
+import com.sivebo.ms_sucursales.dto.request.SucursalUpdateDTO;
 import com.sivebo.ms_sucursales.dto.response.SucursalResponseDTO;
 import com.sivebo.ms_sucursales.exception.EntityNotFoundException;
 import com.sivebo.ms_sucursales.model.Comuna;
@@ -65,7 +66,7 @@ public class SucursalService {
         }
 
         @Transactional
-        public SucursalResponseDTO create(SucursalRequestDTO dto) {
+        public SucursalResponseDTO create(SucursalCreateDTO dto) {
                 Comuna comuna = comunaRepository.findByNombre(dto.getNombreComuna())
                                 .orElseThrow(() -> new EntityNotFoundException("Comuna no encontrada"));
 
@@ -80,16 +81,24 @@ public class SucursalService {
         }
 
         @Transactional
-        public Optional<SucursalResponseDTO> update(String nombre, SucursalRequestDTO dto) {
-                return sucursalRepository.findByNombre(nombre).map(sucursal -> {
+        public Optional<SucursalResponseDTO> update(String nombre, SucursalUpdateDTO dto) {
+                Optional<Sucursal> sucursalOptional = sucursalRepository.findByNombre(nombre);
+                if (sucursalOptional.isEmpty()) {
+                        return Optional.empty();
+                }
+
+                Sucursal sucursal = sucursalOptional.get();
+
+                if (dto.getNombreComuna() != null) {
                         Comuna comuna = comunaRepository.findByNombre(dto.getNombreComuna())
                                         .orElseThrow(() -> new EntityNotFoundException("Comuna no encontrada"));
-                        sucursal.setNombre(dto.getNombre());
                         sucursal.setComuna(comuna);
-                        sucursal.setDireccionFisica(dto.getDireccionFisica());
-                        sucursal.setTelefonoContacto(dto.getTelefonoContacto());
-                        return mapperUtil.mapSucursalToDTO(sucursalRepository.save(sucursal));
-                });
+                }
+                if (dto.getNombre() != null) sucursal.setNombre(dto.getNombre());
+                if (dto.getDireccionFisica() != null) sucursal.setDireccionFisica(dto.getDireccionFisica());
+                if (dto.getTelefonoContacto() != null) sucursal.setTelefonoContacto(dto.getTelefonoContacto());
+
+                return Optional.of(mapperUtil.mapSucursalToDTO(sucursalRepository.save(sucursal)));
         }
 
         @Transactional

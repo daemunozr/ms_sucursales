@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sivebo.ms_sucursales.dto.request.SucursalRequestDTO;
+import com.sivebo.ms_sucursales.dto.request.SucursalCreateDTO;
+import com.sivebo.ms_sucursales.dto.request.SucursalUpdateDTO;
 import com.sivebo.ms_sucursales.dto.response.SucursalResponseDTO;
 import com.sivebo.ms_sucursales.service.SucursalService;
 
@@ -142,7 +143,7 @@ public class SucursalController {
                         )
         })
         @PostMapping
-        public ResponseEntity<SucursalResponseDTO> create(@Valid @RequestBody SucursalRequestDTO dto) {
+        public ResponseEntity<SucursalResponseDTO> create(@Valid @RequestBody SucursalCreateDTO dto) {
                 return ResponseEntity.status(HttpStatus.CREATED)
                                 .body(sucursalService.create(dto));
         }
@@ -174,7 +175,7 @@ public class SucursalController {
         @PutMapping("/{nombre}")
         public ResponseEntity<SucursalResponseDTO> update(
                         @PathVariable String nombre,
-                        @Valid @RequestBody SucursalRequestDTO dto) {
+                        @Valid @RequestBody SucursalUpdateDTO dto) {
 
                 return sucursalService.update(nombre, dto)
                                 .map(ResponseEntity::ok)
